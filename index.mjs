@@ -1,27 +1,29 @@
-import { ApiPromise } from '@polkadot/api';
+import { ApiPromise, WsProvider } from '@polkadot/api';
 
 const TIMEOUT = 15_000;
 
-function query (api) {
-  Promise
-    .all([
+function query () {
+  const provider = new WsProvider();
+
+  ApiPromise
+    .create({ provider })
+    .then((api) => Promise.all([
       api.rpc.system.version(),
       api.rpc.system.health(),
       api.rpc.system.peers(),
       api.rpc.chain.getBlock(),
       api.rpc.chain.getBlockHash()
-    ])
-    .then((values) => console.log(new Date(), JSON.stringify(values.map((v) => v.toHuman()))))
-    .catch((error) => console.error(error));
+    ]))
+    .then((values) => {
+      provider.disconnect();
+      console.log(new Date(), JSON.stringify(values.map((v) => v.toHuman())));
+    })
+    .catch((error) => {
+      console.error(error);
+      process.exit(-1);
+    });
 }
 
-ApiPromise
-  .create()
-  .then((api) => {
-    query(api);
-    setInterval(() => query(api), TIMEOUT);
-  })
-  .catch((error) => {
-    console.error(error);
-    process.exit(-1);
-  });
+query();
+setInterval(query, TIMEOUT);
+

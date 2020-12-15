@@ -4,12 +4,12 @@
   "description": "Queries some specific Substrate block info on a timer",
   "main": "index.js",
   "scripts": {
-    "start": "node ./index.mjs",
+    "start": "node --experimental-json-modules ./index.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@polkadot/api": "^2.10.1"
+    "@polkadot/api": "^3.0.1"
   }
 }
